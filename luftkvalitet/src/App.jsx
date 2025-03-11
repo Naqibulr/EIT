@@ -1,16 +1,19 @@
 import { useState } from "react";
 import "leaflet/dist/leaflet.css";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import { MapContainer, TileLayer } from "react-leaflet";
-import DatePicker from "react-datepicker";
+import { MapContainer, TileLayer, SVGOverlay } from "react-leaflet";
+import Enkel from "./components/Enkel";
+import Avansert from "./components/Avansert";
 import "react-datepicker/dist/react-datepicker.css";
 import "./App.css";
 
 function App() {
   const [selected, setSelected] = useState("enkel");
 
-  const [startDate, setStartDate] = useState(new Date("2022-10-01T00:00:00"));
+  const bounds = [
+    [63.425, 10.404],
+    [63.416, 10.388],
+  ];
 
   return (
     <>
@@ -25,15 +28,45 @@ function App() {
         <MapContainer
           center={[63.4208, 10.395806]}
           zoom={16}
-          scrollWheelZoom={false}
-          dragging={false}
+          scrollWheelZoom={true}
+          dragging={true}
           style={{ height: "100%", width: "50%" }}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <SVGOverlay bounds={bounds}>
+            <svg>
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="28%" x2="100%" y2="0%">
+                  <stop
+                    offset="0%"
+                    style={{ stopColor: "green", stopOpacity: 0.6 }}
+                  />
+                  <stop
+                    offset="30%"
+                    style={{ stopColor: "orange", stopOpacity: 0.6 }}
+                  />
+                  <stop
+                    offset="37%"
+                    style={{ stopColor: "red", stopOpacity: 0.6 }}
+                  />
+                  <stop
+                    offset="44%"
+                    style={{ stopColor: "orange", stopOpacity: 0.6 }}
+                  />
+                  <stop
+                    offset="76%"
+                    style={{ stopColor: "green", stopOpacity: 0.6 }}
+                  />
+                </linearGradient>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grad1)" />
+            </svg>
+          </SVGOverlay>
         </MapContainer>
+
         <div
           style={{
             display: "flex",
@@ -93,92 +126,7 @@ function App() {
                 Avansert
               </Button>
             </div>
-
-            <div style={{ width: "100%", marginTop: "1rem" }}>
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                showTimeSelect
-                timeIntervals={60}
-                timeCaption="Hour"
-                dateFormat="MMMM d, yyyy HH"
-                popperPlacement="right-end"
-                customInput={
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    label="Velg dato og tid"
-                    slotProps={{
-                      input: {
-                        style: {
-                          backgroundColor: "white",
-                          borderRadius: "4px",
-                          fontSize: "16px",
-                        },
-                      },
-                    }}
-                  />
-                }
-              />
-            </div>
-            <div
-              style={{
-                width: "60%",
-                display: "flex",
-                flexDirection: "column",
-                gap: "5px",
-              }}
-            >
-              <h4>Output</h4>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  border: "1px solid black",
-                  padding: "0 10px",
-                }}
-              >
-                <h4>Antall Kjørtøy</h4>
-                <h4>5000</h4>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  border: "1px solid black",
-                  padding: "0 10px",
-                }}
-              >
-                <h4>NO2</h4>
-                <h4>21.1 µg/m³</h4>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  border: "1px solid black",
-                  padding: "0 10px",
-                }}
-              >
-                <h4>PM2.5</h4>
-                <h4>5.1 µg/m³</h4>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  border: "1px solid black",
-                  padding: "0 10px",
-                }}
-              >
-                <h4>PM10</h4>
-                <h4>8.8 µg/m³</h4>
-              </div>
-            </div>
+            {selected === "enkel" ? <Enkel /> : <Avansert />}
           </div>
         </div>
       </div>
