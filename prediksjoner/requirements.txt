@@ -2,3 +2,5 @@ pandas
 scikit-learn
 ipykernel
 matplotlib
+xgboost
+torch
