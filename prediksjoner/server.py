@@ -22,6 +22,8 @@ class AirQualityPredictionResponse(BaseModel):
     pm25: float
     pm10: float
     no2: float
+
+class TrafficPredictionResponse(BaseModel):
     traffic: int
 
 app = FastAPI()
@@ -41,9 +43,6 @@ app.add_middleware(
 
 @app.post("/simple_prediction")
 def simple_prediction(request: SimplePredictionRequest):
-    if request.traffic is None or request.traffic == 0:
-        request.traffic = int(traffic_forecast.predict([[request.hour, request.year, request.month, request.day]])[0])
-    
     input_features = [[request.hour, request.traffic, request.year, request.month, request.day]]
     
     prediction = multi_random_forest.predict(input_features)
@@ -52,7 +51,16 @@ def simple_prediction(request: SimplePredictionRequest):
         pm25=prediction[0][0],
         pm10=prediction[0][1],
         no2=prediction[0][2],
-        traffic=request.traffic
+    )
+
+@app.post("/traffic_prediction")
+def traffic_prediction(request: SimplePredictionRequest):
+    input_features = [[request.hour, request.year, request.month, request.day]]
+    
+    prediction = traffic_forecast.predict(input_features)
+
+    return TrafficPredictionResponse(
+        traffic=int(prediction[0])
     )
 
 if __name__ == "__main__":
