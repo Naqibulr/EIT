@@ -4,7 +4,6 @@ import Papa from "papaparse";
 import { green, purple, red, orange } from "@mui/material/colors";
 import Slider from "@mui/material/Slider";
 import { styled } from "@mui/material/styles";
-
 const CustomSlider = styled(Slider)({
   color: "black",
   height: 4,
@@ -40,32 +39,36 @@ const Avansert = ({ setSummary }) => {
   const [AntallBiler, setAntallBiler] = useState(0);
   const [andelElektrisk, setAndelElektrisk] = useState(0);
   const [data, setData] = useState<any[]>([]);
-
-  // API
-  // Request Method: POST
-  if (
-    startDateTime &&
-    (startDateTime < new Date("2022-10-01T00:00:00") ||
-      startDateTime > new Date("2023-10-01T00:00:00"))
-  ) {
-    fetch("http://127.0.0.1:8000/simple_prediction ", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        year: startDateTime?.getFullYear(),
-        month: startDateTime?.getMonth(),
-        day: startDateTime?.getDate(),
-        hour: startDateTime?.getHours(),
-        traffic: AntallBiler,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-      });
-  }
+  useEffect(() => {
+    if (
+      startDateTime &&
+      (startDateTime < new Date("2022-10-01T00:00:00") ||
+        startDateTime > new Date("2023-10-01T00:00:00"))
+    ) {
+      fetch("http://127.0.0.1:8000/simple_prediction ", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          year: startDateTime?.getFullYear(),
+          month: startDateTime?.getMonth(),
+          day: startDateTime?.getDate(),
+          hour: startDateTime?.getHours(),
+          traffic: AntallBiler,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setFilteredData({
+            NO2: parseFloat(parseFloat(data.no2).toFixed(2)) || 0.0,
+            PM25: parseFloat(parseFloat(data.pm25).toFixed(2)) || 0.0,
+            PM10: parseFloat(parseFloat(data.pm10).toFixed(2)) || 0.0,
+            trafikkMendge: AntallBiler,
+          });
+        });
+    }
+  }, [startDateTime, AntallBiler]);
 
   const thresholds = {
     NO2: {
