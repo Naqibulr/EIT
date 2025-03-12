@@ -22,6 +22,7 @@ class AirQualityPredictionResponse(BaseModel):
     pm25: float
     pm10: float
     no2: float
+    traffic: int
 
 app = FastAPI()
 
@@ -50,7 +51,8 @@ def simple_prediction(request: SimplePredictionRequest):
     return AirQualityPredictionResponse(
         pm25=prediction[0][0],
         pm10=prediction[0][1],
-        no2=prediction[0][2]
+        no2=prediction[0][2],
+        traffic=request.traffic
     )
 
 if __name__ == "__main__":
