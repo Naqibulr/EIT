@@ -227,9 +227,6 @@ const Avansert = ({ setSummary }) => {
     );
   }, [startDateTime, data]);
 
-  const MAX = 2000;
-  const MIN = 0;
-
   const originalNO2 = useRef<number | null>(null);
   const prevSliderValue = useRef<number | null>(null);
 
@@ -307,16 +304,16 @@ const Avansert = ({ setSummary }) => {
                     label: "0",
                   },
                   {
-                    value: 5000,
-                    label: "5000",
+                    value: 2000,
+                    label: "2000",
                   },
                 ] as any
               }
               step={10}
               value={AntallBiler}
               valueLabelDisplay="auto"
-              min={MIN}
-              max={MAX}
+              min={0}
+              max={2000}
               onChange={(e, value) => {
                 setAntallBiler(value as number);
                 setAndelElektrisk(0);
