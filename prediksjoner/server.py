@@ -27,7 +27,7 @@ app = FastAPI()
 
 @app.post("/simple_prediction")
 def simple_prediction(request: SimplePredictionRequest):
-    if request.traffic is None:
+    if request.traffic is None or request.traffic == 0:
         request.traffic = int(traffic_forecast.predict([[request.hour, request.year, request.month, request.day]])[0])
 
     input_features = [[request.hour, request.traffic, request.year, request.month, request.day]]
