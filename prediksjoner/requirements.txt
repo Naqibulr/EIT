@@ -4,3 +4,6 @@ ipykernel
 matplotlib
 xgboost
 torch
+uvicorn
+fastapi
+pydantic
