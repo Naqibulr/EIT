@@ -43,24 +43,29 @@ const Avansert = ({ setSummary }) => {
 
   // API
   // Request Method: POST
-
-  fetch("http://127.0.0.1:8000/simple_prediction ", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      year: startDateTime?.getFullYear(),
-      month: startDateTime?.getMonth(),
-      day: startDateTime?.getDate(),
-      hour: startDateTime?.getHours(),
-      traffic: AntallBiler,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Success:", data);
-    });
+  if (
+    startDateTime &&
+    (startDateTime < new Date("2022-10-01T00:00:00") ||
+      startDateTime > new Date("2023-10-01T00:00:00"))
+  ) {
+    fetch("http://127.0.0.1:8000/simple_prediction ", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        year: startDateTime?.getFullYear(),
+        month: startDateTime?.getMonth(),
+        day: startDateTime?.getDate(),
+        hour: startDateTime?.getHours(),
+        traffic: AntallBiler,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      });
+  }
 
   const thresholds = {
     NO2: {
