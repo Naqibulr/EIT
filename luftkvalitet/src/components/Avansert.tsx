@@ -41,6 +41,27 @@ const Avansert = ({ setSummary }) => {
   const [andelElektrisk, setAndelElektrisk] = useState(0);
   const [data, setData] = useState<any[]>([]);
 
+  // API
+  // Request Method: POST
+
+  fetch("http://127.0.0.1:8000/simple_prediction ", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      year: startDateTime?.getFullYear(),
+      month: startDateTime?.getMonth(),
+      day: startDateTime?.getDate(),
+      hour: startDateTime?.getHours(),
+      traffic: AntallBiler,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Success:", data);
+    });
+
   const thresholds = {
     NO2: {
       green: 100,
