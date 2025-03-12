@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
 import Papa from "papaparse";
 import { green, purple, red, orange } from "@mui/material/colors";
@@ -37,6 +37,7 @@ const Avansert = ({ setSummary }) => {
   });
   const [trafikkData, setTrafikkData] = useState<any[]>([]);
   const [AntallBiler, setAntallBiler] = useState(0);
+
   const [andelElektrisk, setAndelElektrisk] = useState(0);
   const [data, setData] = useState<any[]>([]);
   useEffect(() => {
@@ -44,6 +45,38 @@ const Avansert = ({ setSummary }) => {
       startDateTime &&
       (startDateTime < new Date("2022-10-01T00:00:00") ||
         startDateTime > new Date("2023-10-01T00:00:00"))
+    ) {
+      fetch("http://127.0.0.1:8000/traffic_prediction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          year: startDateTime?.getFullYear(),
+          month: startDateTime?.getMonth(),
+          day: startDateTime?.getDate(),
+          hour: startDateTime?.getHours(),
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setAntallBiler(data.traffic);
+          setFilteredData({
+            NO2: parseFloat(parseFloat(data.no2).toFixed(2)) || 0.0,
+            PM25: parseFloat(parseFloat(data.pm25).toFixed(2)) || 0.0,
+            PM10: parseFloat(parseFloat(data.pm10).toFixed(2)) || 0.0,
+            trafikkMendge: data.traffic,
+          });
+        });
+    }
+  }, [startDateTime]);
+
+  useEffect(() => {
+    if (
+      startDateTime &&
+      (startDateTime < new Date("2022-10-01T00:00:00") ||
+        startDateTime > new Date("2023-10-01T00:00:00") ||
+        AntallBiler !== filteredData.trafikkMendge)
     ) {
       fetch("http://127.0.0.1:8000/simple_prediction ", {
         method: "POST",
@@ -61,6 +94,12 @@ const Avansert = ({ setSummary }) => {
         .then((response) => response.json())
         .then((data) => {
           setFilteredData({
+            NO2: parseFloat(parseFloat(data.no2).toFixed(2)) || 0.0,
+            PM25: parseFloat(parseFloat(data.pm25).toFixed(2)) || 0.0,
+            PM10: parseFloat(parseFloat(data.pm10).toFixed(2)) || 0.0,
+            trafikkMendge: AntallBiler,
+          });
+          setSummary({
             NO2: parseFloat(parseFloat(data.no2).toFixed(2)) || 0.0,
             PM25: parseFloat(parseFloat(data.pm25).toFixed(2)) || 0.0,
             PM10: parseFloat(parseFloat(data.pm10).toFixed(2)) || 0.0,
@@ -188,9 +227,38 @@ const Avansert = ({ setSummary }) => {
     );
   }, [startDateTime, data]);
 
-  const MAX = 5000;
+  const MAX = 2000;
   const MIN = 0;
 
+  const originalNO2 = useRef<number | null>(null);
+  const prevSliderValue = useRef<number | null>(null);
+
+  const handleAndelElektrisk = (e, value: number) => {
+    let no2 = filteredData.NO2;
+
+    if (originalNO2.current === null) {
+      originalNO2.current = no2; // Store original NO2 when slider is first used
+    }
+
+    const previousValue = prevSliderValue.current ?? value;
+
+    let updatedNO2 = originalNO2.current;
+
+    if (value > 0) {
+      updatedNO2 = parseFloat(
+        (originalNO2.current * (1 - (value / 100) * 0.2)).toFixed(2)
+      );
+    } else {
+      updatedNO2 = originalNO2.current;
+    }
+
+    setFilteredData({
+      ...filteredData,
+      NO2: updatedNO2,
+    });
+
+    prevSliderValue.current = value;
+  };
   return (
     <div>
       <div
@@ -249,7 +317,11 @@ const Avansert = ({ setSummary }) => {
               valueLabelDisplay="auto"
               min={MIN}
               max={MAX}
-              onChange={(e, value) => setAntallBiler(value as number)}
+              onChange={(e, value) => {
+                setAntallBiler(value as number);
+                setAndelElektrisk(0);
+                originalNO2.current = null;
+              }}
               style={{ width: "200px" }}
             />
           </div>
@@ -280,7 +352,10 @@ const Avansert = ({ setSummary }) => {
               valueLabelDisplay="auto"
               min={0}
               max={100}
-              onChange={(e, value) => setAndelElektrisk(value as number)}
+              onChange={(e, value) => {
+                setAndelElektrisk(value as number);
+                handleAndelElektrisk(e, value as number);
+              }}
               style={{ width: "200px" }}
             />
           </div>
