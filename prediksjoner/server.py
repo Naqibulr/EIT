@@ -41,7 +41,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/simple_prediction")
+@app.post("/airquality_prediction")
 def simple_prediction(request: SimplePredictionRequest):
     input_features = [[request.hour, request.traffic, request.year, request.month, request.day]]
     
