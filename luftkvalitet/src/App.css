@@ -1,4 +1,9 @@
-mapContainer {
-  height: 100%;
-  width: 50%;
+.custom-datepicker .react-datepicker__day--selected {
+  background-color: #426b1f !important; /* Change to your preferred color */
+  color: white !important;
+}
+
+.custom-datepicker .react-datepicker__day--keyboard-selected {
+  background-color: #426b1f !important;
+  color: white !important;
 }

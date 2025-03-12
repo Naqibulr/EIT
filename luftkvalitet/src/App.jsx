@@ -15,7 +15,6 @@ function App() {
     PM25: 0.0,
     PM10: 0.0,
   });
-  console.log(summary);
   const thresholds = {
     NO2: { green: 100, yellow: 200, red: 400 },
     PM25: { green: 30, yellow: 50, red: 150 },
@@ -127,16 +126,19 @@ function App() {
             justifyContent: "start",
             alignItems: "center",
             width: "50%",
-            padding: "1rem",
+            paddingLeft: "1rem",
           }}
         >
           <div
-            style={{ display: "flex", justifyContent: "end", width: "100%" }}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
           >
-            <h3 style={{ color: "#426b1f" }}>NTNU - EIT</h3>
-          </div>
-          <div>
+            {" "}
             <h1>Luftkvalitet i Trondheim</h1>
+            <h3 style={{ color: "#426b1f" }}>NTNU - EIT</h3>
           </div>
           <div
             style={{
@@ -147,7 +149,6 @@ function App() {
               gap: "0.5rem",
             }}
           >
-            <h3>Velg modus</h3>
             <div
               style={{
                 width: "100%",
@@ -182,7 +183,7 @@ function App() {
             {selected === "enkel" ? (
               <Enkel setSummary={setSummary} />
             ) : (
-              <Avansert />
+              <Avansert setSummary={setSummary} />
             )}
           </div>
         </div>

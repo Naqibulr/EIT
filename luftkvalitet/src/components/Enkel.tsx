@@ -131,9 +131,19 @@ const Enkel = ({ setSummary }) => {
   }, [startDateTime, data]);
 
   return (
-    <div>
-      <div style={{ width: "100%", marginTop: "1rem" }}>
+    <div
+      style={{
+        marginTop: "1rem",
+        width: "100%",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+        }}
+      >
         <DatePicker
+          inline
           selected={startDateTime}
           onChange={(date) => setStartDateTime(date)}
           showTimeSelect
@@ -142,22 +152,7 @@ const Enkel = ({ setSummary }) => {
           timeFormat="HH:mm"
           dateFormat="MMMM d, yyyy HH"
           popperPlacement="right-end"
-          customInput={
-            <TextField
-              variant="outlined"
-              fullWidth
-              label="Velg dato og tid"
-              slotProps={{
-                input: {
-                  style: {
-                    backgroundColor: "white",
-                    borderRadius: "4px",
-                    fontSize: "16px",
-                  },
-                },
-              }}
-            />
-          }
+          className="custom-datepicker"
         />
       </div>
       <div
